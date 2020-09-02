@@ -11597,7 +11597,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path exchangeName
      */
-    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
+    static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq", path);
     }
@@ -11620,7 +11620,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path exchangeName
      */
-    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
+    static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
