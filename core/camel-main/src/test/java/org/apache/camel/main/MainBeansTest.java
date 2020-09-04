@@ -23,15 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.CamelContextHelper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class MainBeansTest {
 
-    @Test
-    public void testBindBeans() throws Exception {
-        MyFoo myFoo = new MyFoo();
+    private static Main main;
+    private static MyFoo myFoo;
 
-        Main main = new Main();
+    @BeforeAll
+    static void setup() {
+        myFoo = new MyFoo();
+
+        main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.bind("myFoolish", myFoo);
 
@@ -47,7 +53,15 @@ public class MainBeansTest {
         main.addProperty("camel.beans.myfoo.map[key3]", "value3");
 
         main.start();
+    }
 
+    @AfterAll
+    static void tearDown() {
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeans() throws Exception {
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
@@ -66,8 +80,16 @@ public class MainBeansTest {
         assertEquals("value1", myFoo.getMap().get("key1"));
         assertEquals("value2", myFoo.getMap().get("key2"));
         assertEquals("value3", myFoo.getMap().get("key3"));
+    }
 
-        main.stop();
+    @Test
+    public void testLookupAndConvert() {
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        String valueNoHash = "#bean:myfoo?method=getName";
+        String str = CamelContextHelper.lookupAndConvert(camelContext, valueNoHash, String.class);
+        System.out.println(str);
     }
 
     public static class MyRouteBuilder extends RouteBuilder {
