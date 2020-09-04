@@ -22,8 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -85,9 +91,9 @@ public class MainBeansTest {
     @Test
     public void testLookupAndConvert() {
         CamelContext camelContext = main.getCamelContext();
+        camelContext.getTypeConverterRegistry().addTypeConverters(new MyTypeConverter());
         assertNotNull(camelContext);
-
-        String valueNoHash = "#bean:myfoo?method=getName";
+        String valueNoHash = "myfoo";
         String str = CamelContextHelper.lookupAndConvert(camelContext, valueNoHash, String.class);
         System.out.println(str);
     }
@@ -96,6 +102,12 @@ public class MainBeansTest {
         @Override
         public void configure() throws Exception {
             from("direct:start").to("mock:foo");
+        }
+    }
+    public static class MyTypeConverter implements TypeConverters {
+        @Converter
+        public String convertTo(MyFoo myFoo) throws TypeConversionException {
+            return myFoo.getName();
         }
     }
 
